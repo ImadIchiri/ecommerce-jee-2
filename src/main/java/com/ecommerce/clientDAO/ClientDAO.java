@@ -26,32 +26,34 @@ public class ClientDAO {
 	/*
 	 * getProductsById : helper method
 	 * */
-	public static Produit getProductsById(int productId) {
-		Produit produit = new Produit();
+	public static Produit getProductById(int productId) {
+		Produit produit = null;
 		
 		int id, quantityDispo;
 		Categorie categorie;
-		String nom;
+		String titre, imageName;
 		double prix;
 
 		try (Connection connection = DataBaseConnection.connectToDB();) {
 			PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM Produit WHERE id = ?");
-	    	preparedStatement.setString(1, "productId");
+	    	preparedStatement.setInt(1, productId);
 
 	    	ResultSet resultSet = preparedStatement.executeQuery();
 
 	        while (resultSet.next()) {
 	        	id = resultSet.getInt("id");
-	        	quantityDispo = resultSet.getInt("quantityDispo");
- 	        	nom = resultSet.getString("nom");
+	        	titre = resultSet.getString("titre");
 	        	prix = resultSet.getDouble("prix");
+	        	quantityDispo = resultSet.getInt("quantiteDispo");
+	        	imageName = resultSet.getString("image");
 	        	int idCategorie = resultSet.getInt("idCategorie");
 	        	
 	        	Optional<Categorie> optionalCategorie = UserDAO.getCategorieById(idCategorie);
-	        	 
+	        	
+	        	
 	        	if (optionalCategorie.isPresent()) {
 	        		categorie = optionalCategorie.get();
-	        		// produit = new Produit(id, categorie, nom, quantityDispo, prix);
+	        		produit = new Produit(id, titre, prix, quantityDispo, imageName, categorie);
 	        	}
 	        }
 	     } catch (SQLException e) {
@@ -62,25 +64,24 @@ public class ClientDAO {
 	}
 
 	
-	public void addProductToPanier(int idProduit, int quantite) {
-		Panier panier = new Panier(); // 
-		Produit produit = ClientDAO.getProductsById(idProduit);
+	public static Optional<LignePanier> addProductToPanier(Panier panier, Produit produit, int quantite) {
+		LignePanier lPanier = null;
+		
 		if (produit.getQuantityDispo() >= quantite) {
-			LignePanier lPanier = new LignePanier(produit, panier, quantite);
-			Panier.insertIntoListLignePanier(lPanier); //  static?
-			//Panier.getListLignePanier().add(lPanier); //  static?
-		}	
+			lPanier = new LignePanier(produit, panier, quantite);
+		}
+		
+		return Optional.ofNullable(lPanier);
 	}
-	
 	
 	
 	//public affichePanier() {} we already have getListLignePanier() 
 	
-	public void addCommande(int idProduit, int quantite, String dateCommande, User user) {
+	public static void addCommande(int idProduit, int quantite, String dateCommande, User user) {
 		
 		// i think we should do the same thing we have been did with the previous method
 		Commande commande = new Commande(dateCommande, user);
-		Produit produit = ClientDAO.getProductsById(idProduit);
+		Produit produit = ClientDAO.getProductById(idProduit);
 		LigneCommande lCommande = new LigneCommande(commande, produit, quantite);
 		 try (Connection connection = DataBaseConnection.connectToDB();){
 		        

@@ -49,4 +49,11 @@ public class LignePanier {
 	public void setQuantite(int quantite) {
 		this.quantite = quantite;
 	}
+
+	@Override
+	public String toString() {
+		return "LignePanier [id=" + id + ", produit=" + produit + ", panier=" + panier + ", quantite=" + quantite + "]";
+	}
+	
+	
 }

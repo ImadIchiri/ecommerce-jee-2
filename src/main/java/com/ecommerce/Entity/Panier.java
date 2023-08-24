@@ -21,10 +21,6 @@ public class Panier {
 		Panier.idCounter = idCounter;
 	}
 
-	public static List<LignePanier> getListLignePanier() {
-		return listLignePanier;
-	}
-
 	public static void setListLignePanier(List<LignePanier> listLignePanier) {
 		Panier.listLignePanier = listLignePanier;
 	}
@@ -39,10 +35,18 @@ public class Panier {
 	public void setId(int id) {
 		this.id = id;
 	}
+	
 	public static void insertIntoListLignePanier(LignePanier lignePanier) {
 		listLignePanier.add(lignePanier);
-		
-		
+	}
+	
+	public static List<LignePanier> getListLignePanier() {
+		return listLignePanier;
+	}
+
+	@Override
+	public String toString() {
+		return "Panier [id=" + id + "]";
 	}
 	
 	
