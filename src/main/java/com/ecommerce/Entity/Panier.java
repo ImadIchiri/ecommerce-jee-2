@@ -2,6 +2,7 @@ package com.ecommerce.Entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Panier {
 	private static int idCounter = 0;
@@ -38,6 +39,15 @@ public class Panier {
 	
 	public static void insertIntoListLignePanier(LignePanier lignePanier) {
 		listLignePanier.add(lignePanier);
+	}
+	
+	public static void removeFromListLignePanier(int id) {
+		setListLignePanier(
+				listLignePanier
+				.stream()
+				.filter(item -> item.getId() != id)
+				.collect(Collectors.toList())
+		);
 	}
 	
 	public static List<LignePanier> getListLignePanier() {

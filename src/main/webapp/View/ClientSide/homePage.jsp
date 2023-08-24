@@ -5,7 +5,6 @@
     
     <%
 		List<Produit> productsList =(List<Produit>) request.getAttribute("ProductsList");
-    	String productName = (String) request.getAttribute("productName");
 	%>
     
 <!DOCTYPE html>
@@ -22,30 +21,9 @@
 	<link rel="stylesheet" href="View/ClientSide/homePage.css" />
 </head>
 <body>
+
+	<%@include file="header.jsp"%>
 	
-	<header class="header bg-light py-3">
-        <div class="container main_header_container">
-            <img src="images/websiteImages/logo.png" />
-            
-            <form action="homepage" method="get">
-            	<input class="form-control" name="productName" placeholder="Product Name" value="<% if (productName != null) { out.print(productName); } %>" />
-            	<button class="btn text-white ml-1" style="background: linear-gradient(to bottom, #800080, #4b0082);">
-            		<i class="fa-solid fa-magnifying-glass"></i>
-            	</button>
-            </form>
-            
-            <div class="right_btns">
-            	<a href="">
-            		<i class="fa-solid fa-cart-shopping fa-xl" style="color: #800080;"></i>
-            	</a>
-            	<a href="">
-            		<i class="fa-solid fa-user fa-xl" style="color: #800080;"></i>
-            	</a>
-            </div>
-        </div>
-    </header>
-    
-    
     <nav class="menu py-3" style="background: linear-gradient(to bottom, #800080, #4b0082);">
         <div class="container">
             <div id="menu-links" class="menu-links">
@@ -61,7 +39,8 @@
     <section class="products py-5">
         <div class="container">
             <div class="row" style="row-gap: 1rem;">
-            <% for(Produit product : productsList) { %>
+            <% if (productsList != null) { 
+            	for(Produit product : productsList) { %>
                 <!-- Product cards go here -->
                 <form action="homepage" method="post" class="col-md-4">
                 <input type="number" name="id" readonly="readonly" hidden="" value="<%=product.getId() %>" />
@@ -77,7 +56,8 @@
                     </div>
                 </form>
                 <!-- Repeat for other products -->
-               <% } %>
+               <% }
+            	} %>
             </div>
         </div>
     </section>

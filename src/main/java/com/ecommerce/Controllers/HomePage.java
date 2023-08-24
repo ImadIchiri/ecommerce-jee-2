@@ -128,13 +128,13 @@ public class HomePage extends HttpServlet {
 				
 		Optional<LignePanier> optLignePanier = ClientDAO.addProductToPanier(panier, produit, Integer.parseInt(request.getParameter("quantite")));
 		
-		if (optLignePanier.isPresent()) {			
+		if (optLignePanier.isPresent()) {
 			panier.insertIntoListLignePanier(optLignePanier.get());
 
 			session.setAttribute("PANIER", panier);
 		}
 		
-		// request.getRequestDispatcher("View/ClientSide/homePage.jsp").forward(request, response);
+		// request.getRequestDispatcher("homepage").forward(request, response);
 		response.sendRedirect("homepage");
 	}
 
