@@ -63,18 +63,19 @@
             <div class="row" style="row-gap: 1rem;">
             <% for(Produit product : productsList) { %>
                 <!-- Product cards go here -->
-                <div class="col-md-4">
+                <form action="homepage" method="post" class="col-md-4">
+                <input type="number" name="id" readonly="readonly" hidden="" value="<%=product.getId() %>" />
                     <div class="product-card border p-3">
                         <img id="product_image" src="images/products/<%=product.getImageName() %>.webp" alt="Product 1" class="img-fluid mb-3">
                         <p id="category_name"><%=product.getCategorie().getCategorie() %></p>
                         <h4 id="max_letters_title" title="<%=product.getTitre() %>" style="font-size: 1.25rem;"><%=product.getTitre() %></h4>
                         <p>$<%=product.getPrix() %></p>
-                        <input type="number" value="1" min="1" max="<%=product.getQuantityDispo() %>" class="form-control mb-2">
-                        <a href="" class="btn text-white w-100" style="background: linear-gradient(to bottom, #800080, #4b0082);">
+                        <input type="number" name="quantite" value="1" min="1" max="<%=product.getQuantityDispo() %>" class="form-control mb-2">
+                        <button class="btn text-white w-100" style="background: linear-gradient(to bottom, #800080, #4b0082);">
                         	Add to Cart
-                        </a>
+                        </button>
                     </div>
-                </div>
+                </form>
                 <!-- Repeat for other products -->
                <% } %>
             </div>
