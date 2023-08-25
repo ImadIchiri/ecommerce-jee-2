@@ -38,20 +38,47 @@ public class Panier {
 	}
 	
 	public static void insertIntoListLignePanier(LignePanier lignePanier) {
-		listLignePanier.add(lignePanier);
+		
+		boolean isExist = listLignePanier
+				.stream()
+				.anyMatch(item -> item.getProduit().getId() == lignePanier.getProduit().getId());
+		
+		System.out.println("IS_EXIST ==> " + isExist);
+		
+		if (isExist) {	
+			listLignePanier = listLignePanier.stream().map(item -> {
+				if (item.getProduit().getId() == lignePanier.getProduit().getId()) {
+					item.setQuantite(
+							item.getQuantite() + lignePanier.getQuantite()
+					);
+				}
+				
+				return item;
+			}).collect(Collectors.toList());
+		}
+		
+		if (!isExist) {
+			listLignePanier.add(lignePanier);
+		}
 	}
 	
 	public static void removeFromListLignePanier(int id) {
-		setListLignePanier(
-				listLignePanier
-				.stream()
-				.filter(item -> item.getId() != id)
-				.collect(Collectors.toList())
-		);
+		listLignePanier.removeIf(item -> item.getId() == id);
 	}
 	
 	public static List<LignePanier> getListLignePanier() {
 		return listLignePanier;
+	}
+	
+	public static double getTotalPrice() {
+		// lp == LignePanie
+		double total = 0;
+		
+		for (LignePanier lp : listLignePanier) {
+			total += lp.getQuantite() * lp.getProduit().getPrix();
+		};
+		
+		return total;
 	}
 
 	@Override

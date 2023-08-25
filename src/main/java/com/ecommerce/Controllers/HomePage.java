@@ -42,10 +42,6 @@ public class HomePage extends HttpServlet {
 		HttpSession session = request.getSession();		
 		List<Produit> productList = new ArrayList<Produit>();
 		
-		if (session.getAttribute("PANIER") != null) {
-			Panier tempPanier =(Panier) session.getAttribute("PANIER");
-		}
-		
 		
 		if (request.getParameter("productName") != null || request.getParameter("category") != null) {
 			
@@ -105,7 +101,7 @@ public class HomePage extends HttpServlet {
 			}
 		}
 		
-		request.setAttribute("ProductsList", productList);
+		request.setAttribute("PRODUCTS_LIST", productList);
 		request.getRequestDispatcher("View/ClientSide/homePage.jsp").forward(request, response);
 	}
 
@@ -115,26 +111,47 @@ public class HomePage extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
 		
+		System.out.println("START DO POST");
+		
 		Produit produit = ClientDAO.getProductById(Integer.parseInt(request.getParameter("id")));
 		Panier panier = null;
+		List<LignePanier> listLignePanier = null;
+		
+		System.out.println(produit);
 
-		if (session.getAttribute("PANIER") != null) {
-			panier =(Panier) session.getAttribute("PANIER");
+		if (session.getAttribute("LIST_LIGNE_PANIER") != null) {
+			System.out.println("PANIER_NOT_NULL: " + session.getAttribute("LIST_LIGNE_PANIER"));
+			listLignePanier =(List<LignePanier>) session.getAttribute("LIST_LIGNE_PANIER");
+			panier = listLignePanier.get(0).getPanier();
+			System.out.println("END_PANIER_NOT_NULL: " + panier);
 		}
 		
-		if (session.getAttribute("PANIER") == null) {
+		if (session.getAttribute("LIST_LIGNE_PANIER") == null) {
+			System.out.println("PANIER_NULL");
 			panier = new Panier();
 		}
+		
+		System.out.println("PANIER(1) ==> " + panier);
 				
 		Optional<LignePanier> optLignePanier = ClientDAO.addProductToPanier(panier, produit, Integer.parseInt(request.getParameter("quantite")));
 		
+		System.out.println("OPT_LIGNE_PANIER ==> " + optLignePanier);
+		
 		if (optLignePanier.isPresent()) {
-			panier.insertIntoListLignePanier(optLignePanier.get());
+			if (panier != null) {
+				Panier.insertIntoListLignePanier(optLignePanier.get());
+				session.setAttribute("LIST_LIGNE_PANIER", Panier.getListLignePanier());
+			}
+			
+			if (panier == null) {
+				listLignePanier.add(optLignePanier.get());
+				session.setAttribute("LIST_LIGNE_PANIER", listLignePanier);
+			}
 
-			session.setAttribute("PANIER", panier);
+			
+			System.out.println("PANIER(2) ==> " + session.getAttribute("LIST_LIGNE_PANIER"));
 		}
 		
-		// request.getRequestDispatcher("homepage").forward(request, response);
 		response.sendRedirect("homepage");
 	}
 

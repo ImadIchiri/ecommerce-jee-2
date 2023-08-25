@@ -1,3 +1,5 @@
+<%@page import="java.util.Arrays"%>
+<%@page import="java.util.ArrayList"%>
 <%@page import="com.ecommerce.Entity.LignePanier"%>
 <%@page import="com.ecommerce.Entity.Panier"%>
 <%@page import="java.util.List"%>
@@ -5,7 +7,7 @@
     pageEncoding="ISO-8859-1"%>
     
     <%
-    	List<LignePanier> listLignePanier =(List<LignePanier>) session.getAttribute("PANIER");
+    	List<LignePanier> listLignePanier =(List<LignePanier>) session.getAttribute("LIST_LIGNE_PANIER");
     %>
 
 <!DOCTYPE html>
@@ -52,8 +54,9 @@
                   </tr>
               </thead>
               <tbody>
+              
               <% if (listLignePanier != null) { 
-              		for(LignePanier lignePanier : listLignePanier) { %>
+              		 for(LignePanier lignePanier : listLignePanier) { %>
                   <tr>
                       <td><img src="images/products/<%=lignePanier.getProduit().getImageName() %>.webp" alt="Product 1" class="img-fluid" style="max-width: 100px;"></td>
                       <td><%=lignePanier.getProduit().getTitre() %></td>
@@ -69,8 +72,9 @@
                       	</form>
                       </td>
                   </tr>
-              <% } 
-              	} %>
+              <% }
+              } %>
+              	
               </tbody>
             </table>
             </div>
@@ -79,8 +83,8 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Total</h4>
-                        <p class="card-text">Total de produits: 3</p>
-                        <p class="card-text">Total: $88.00</p>
+                        <p class="card-text">Total de produits: <%=Panier.getListLignePanier().size() %></p>
+                        <p class="card-text">Total: $<%=Panier.getTotalPrice() %></p>
                         <button class="btn btn-primary btn-block " style="background: linear-gradient(to bottom, #800080, #4b0082)">Proceed to Checkout</button>
                     </div>
                 </div>
