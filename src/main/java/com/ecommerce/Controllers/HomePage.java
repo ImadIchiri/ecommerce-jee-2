@@ -55,12 +55,13 @@ public class HomePage extends HttpServlet {
 					
 					productList.addAll(
 							tempProductsList.stream()
-								.filter(p -> p.getTitre().contains(productName))
+								.filter(p -> p.getTitre().toLowerCase().contains(productName.toLowerCase()))
 								.collect(Collectors.toList())
 					);
 				}
 				
 				if (session.getAttribute("PRODUCTS_LIST") == null) {
+					// Filtred Products By Name
 					productList.addAll(UserDAO.getProductsByName(productName));
 				}
 			}
@@ -73,7 +74,6 @@ public class HomePage extends HttpServlet {
 				if (session.getAttribute("PRODUCTS_LIST") != null) {
 					List<Produit> tempProductsList =(List<Produit>) session.getAttribute("PRODUCTS_LIST");
 					
-					
 					productList.addAll(
 							tempProductsList.stream()
 								.filter(p -> p.getCategorie().getCategorie().equalsIgnoreCase(category))
@@ -82,6 +82,7 @@ public class HomePage extends HttpServlet {
 				}
 				
 				if (session.getAttribute("PRODUCTS_LIST") == null) {
+					// Filtred Products By Category
 					productList.addAll(UserDAO.getProductsByCategorie(category));
 				}
 			}
@@ -91,13 +92,15 @@ public class HomePage extends HttpServlet {
 			request.removeAttribute("category");
 			request.removeAttribute("productName");
 			
+			
+			// Order Is So Important ('!= NULL' THEN '== NULL')
+			if (session.getAttribute("PRODUCTS_LIST") != null) {
+				productList.addAll((List<Produit>) session.getAttribute("PRODUCTS_LIST"));
+			}
+			
 			if (session.getAttribute("PRODUCTS_LIST") == null) {
 				productList.addAll(UserDAO.getAllProducts());
 				session.setAttribute("PRODUCTS_LIST", productList);
-			}
-			
-			if (session.getAttribute("PRODUCTS_LIST") != null) {
-				productList.addAll((List<Produit>) session.getAttribute("PRODUCTS_LIST"));
 			}
 		}
 		

@@ -9,15 +9,13 @@ public class Role {
 	
 	public Role() {}
 	
-	public Role(String role, List<User> usersList) {
+	public Role(String role) {
 		this.role = role;
-		this.usersList = usersList;
 	}
 	
-	public Role(int id, String role, List<User> usersList) {
+	public Role(int id, String role) {
 		this.id = id;
 		this.role = role;
-		this.usersList = usersList;
 	}
 	
 	public int getId() {

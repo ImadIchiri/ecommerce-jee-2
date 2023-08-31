@@ -17,15 +17,7 @@ import com.ecommerce.Entity.Role;
 import com.ecommerce.Entity.User;
 import com.ecommerce.userDAO.UserDAO;
 
-
-
-
 public class ClientDAO {
-	
-	
-	/*
-	 * getProductsById : helper method
-	 * */
 	public static Produit getProductById(int productId) {
 		Produit produit = null;
 		
@@ -62,7 +54,6 @@ public class ClientDAO {
 		
 	     return produit;		
 	}
-
 	
 	public static Optional<LignePanier> addProductToPanier(Panier panier, Produit produit, int quantite) {
 		LignePanier lPanier = null;
@@ -74,13 +65,12 @@ public class ClientDAO {
 		return Optional.ofNullable(lPanier);
 	}
 	
+	//public affichePanier() {} we already have getListLignePanier()
 	
-	//public affichePanier() {} we already have getListLignePanier() 
-	
-	public static void addCommande(int idProduit, int quantite, String dateCommande, User user) {
+	public static void addCommande(int idProduit, int quantite, User user, String dateCommande) {
 		
 		// i think we should do the same thing we have been did with the previous method
-		Commande commande = new Commande(dateCommande, user);
+		Commande commande = new Commande(user, dateCommande);
 		Produit produit = ClientDAO.getProductById(idProduit);
 		LigneCommande lCommande = new LigneCommande(commande, produit, quantite);
 		 try (Connection connection = DataBaseConnection.connectToDB();){
@@ -105,64 +95,56 @@ public class ClientDAO {
 		        }
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-public void addCommande2(Panier panier, String dateCommande, User user) {
+	public static Optional<Commande> createCommande(User user, String dateCommande) {
+		Commande commande = null;
 		
-		// i think we should do the same thing we have been did with the previous method
-		Commande commande = new Commande(dateCommande, user);
 		try (Connection connection = DataBaseConnection.connectToDB();){
+	        PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO Commande (user, date) VALUES (?, ?)");
+	        preparedStatement.setInt(1, user.getId());
+	        preparedStatement.setString(2, dateCommande);
 	        
-
-	        PreparedStatement insertInToCmd = connection.prepareStatement("insert into Commande (date, user) values (?, ? ) ;");
-	        User u = commande.getUser();
-
-	        insertInToCmd.setString(1,commande.getDateCommande());
-	        insertInToCmd.setInt(2,u.getId());
-	        insertInToCmd.executeUpdate();
-		
+	        int insertCount = preparedStatement.executeUpdate();
 	        
-		List<LignePanier> listLignePanier = panier.getListLignePanier();
-		//Produit produit = ClientDAO.getProductsById(idProduit);
-		
-		for(LignePanier lignePanier: listLignePanier) {
-			LigneCommande lCommande = new LigneCommande(commande, lignePanier.getProduit(), lignePanier.getQuantite());
-			 
-	        
-	        PreparedStatement insertInToLigneCmd = connection.prepareStatement("insert into LigneCommande (idCommande, idProduit, quantite) values (?, ?, ?) ;");
-
-	        insertInToLigneCmd.setInt(1, commande.getId());
-	        insertInToLigneCmd.setInt(2, lignePanier.getProduit().getId());
-	        insertInToLigneCmd.setInt(3, lignePanier.getProduit().getQuantityDispo());
-	        insertInToLigneCmd.executeUpdate();
-			
-		}
-		          
-		        } catch(SQLException e) {
-		        	e.printStackTrace();
+	        if (insertCount > 0) {
+		        PreparedStatement selectCmdId = connection.prepareStatement("SELECT MAX(id) AS 'id' FROM Commande");
+		        ResultSet resultSet = selectCmdId.executeQuery();
+		        
+		        if (resultSet.next()) {
+		        	int id = resultSet.getInt("id");
+		        	commande = new Commande(id, user, dateCommande);
 		        }
+	        }
+		          
+		} catch(SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return Optional.ofNullable(commande);
 	}
-	
-	
+
+	public static int createLigneCommande(Commande commande, Produit produit, int quantite) {
+		int insertCount = 0;
+		try (Connection connection = DataBaseConnection.connectToDB();){
+	        PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO LigneCommande (idCommande, idProduit, quantite) VALUES (?, ?, ?)");
+	        preparedStatement.setInt(1, commande.getId());
+	        preparedStatement.setInt(2, produit.getId());
+	        preparedStatement.setInt(3, quantite);
+	        
+	        insertCount = preparedStatement.executeUpdate();
+	        
+		} catch(SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return insertCount;
+	}
 	
 	public void removeProduitFromPanier(int idlLignePanier) {
 	    List<LignePanier> listLignePanier = Panier.getListLignePanier();
 	    
 	    listLignePanier.removeIf(ligne -> ligne.getId() == idlLignePanier);
 	}
-
-		
-	//public afiche panier()  getListlignePanier()
+	
 }
 	
 	

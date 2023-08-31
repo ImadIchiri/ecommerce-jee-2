@@ -11,15 +11,15 @@ public class Commande {
 	
 	public Commande() {}
 	
-	public Commande(String dateCommande, User user) {		// user ??
-		this.dateCommande = dateCommande;
+	public Commande(User user, String dateCommande) {
 		this.user = user;
+		this.dateCommande = dateCommande;
 	}
 
-	public Commande(int id, String dateCommande, User user) { // user ??
+	public Commande(int id, User user, String dateCommande) {
 		this.id = id;
-		this.dateCommande = dateCommande;
 		this.user = user;
+		this.dateCommande = dateCommande;
 	}
 /*
 	public List<LigneCommande> getListeLigneCommande() {

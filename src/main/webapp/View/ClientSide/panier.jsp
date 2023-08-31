@@ -65,7 +65,7 @@
                       <td>$<%=lignePanier.getProduit().getPrix() *  lignePanier.getQuantite()%></td>
                       <td>
                       	<form action="panier" method="post">
-                      	<input type="text" hidden readonly name="id" value="<%=lignePanier.getId() %>" />
+                      	<input type="text" hidden readonly name="delete_id" value="<%=lignePanier.getId() %>" />
 	                      	<button>
 	                      		<i class="fa-solid fa-trash-can"></i>
 	                      	</button>
@@ -81,12 +81,12 @@
 
             <div class="col-md-4">
                 <div class="card">
-                    <div class="card-body">
+                    <form class="card-body" method="post" action="commande">
                         <h4 class="card-title">Total</h4>
                         <p class="card-text">Total de produits: <%=Panier.getListLignePanier().size() %></p>
                         <p class="card-text">Total: $<%=Panier.getTotalPrice() %></p>
                         <button class="btn btn-primary btn-block " style="background: linear-gradient(to bottom, #800080, #4b0082)">Proceed to Checkout</button>
-                    </div>
+                    </form>
                 </div>
             </div>
             </div>

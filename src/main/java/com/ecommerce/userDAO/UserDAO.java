@@ -1,5 +1,6 @@
 package com.ecommerce.userDAO;
 
+import java.lang.foreign.Linker.Option;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,8 +12,96 @@ import java.util.Optional;
 import com.ecommerce.DAO.DataBaseConnection;
 import com.ecommerce.Entity.Categorie;
 import com.ecommerce.Entity.Produit;
+import com.ecommerce.Entity.Role;
+import com.ecommerce.Entity.User;
 
 public class UserDAO {
+	public static Optional<User> userLogin(String email, String password) {
+		User user = null;
+		
+		int id;
+		String nom, prenom, dateNaissance;
+		Role role;
+		
+		try (Connection connection = DataBaseConnection.connectToDB();) {
+	    	 PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM User WHERE email = ? AND password = ?");
+	    	 preparedStatement.setString(1, email);
+	    	 preparedStatement.setString(2, password);
+
+	    	 ResultSet resultSet = preparedStatement.executeQuery();
+
+	         while (resultSet.next()) {
+	        	 id = resultSet.getInt("id");
+	        	 nom = resultSet.getString("nom");
+	        	 prenom = resultSet.getString("prenom");
+	        	 dateNaissance = resultSet.getString("dateNaissance");
+	        	 
+	        	 int roleId = resultSet.getInt("role");
+	        	 role = getRoleById(roleId).get();
+	        	 
+	        	 user = new User(id, nom, prenom, dateNaissance, role, email, password);
+	         }
+	     } catch (SQLException e) {
+	    	 e.printStackTrace();
+	     }
+		
+		return Optional.ofNullable(user);
+	}
+	
+	public static Optional<Role> getRoleById(int id) {
+		Role roleObj = null;
+		
+		String role;
+		
+		try (Connection connection = DataBaseConnection.connectToDB();) {
+	    	 PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM Role WHERE id = ?");
+	    	 preparedStatement.setInt(1, id);
+
+	    	 ResultSet resultSet = preparedStatement.executeQuery();
+
+	         while (resultSet.next()) {
+	        	 role = resultSet.getString("role");
+	        	 
+	        	 roleObj = new Role(id, role);
+	         }
+	     } catch (SQLException e) {
+	    	 e.printStackTrace();
+	     }
+		
+		return Optional.ofNullable(roleObj);
+	}
+	
+	public static Optional<User> getUserById(int id) {
+		User user = null;
+		
+		String nom, prenom, dateNaissance, email, password;
+		Role role;
+		
+		try (Connection connection = DataBaseConnection.connectToDB();) {
+	    	 PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM User WHERE id = ?");
+	    	 preparedStatement.setInt(1, id);
+
+	    	 ResultSet resultSet = preparedStatement.executeQuery();
+
+	         while (resultSet.next()) {
+	        	 nom = resultSet.getString("nom");
+	        	 prenom = resultSet.getString("prenom");
+	        	 dateNaissance = resultSet.getString("dateNaissance");
+	        	 email = resultSet.getString("email");
+	        	 password = resultSet.getString("password");
+	        	 
+	        	 int roleId = resultSet.getInt("role");
+	        	 role = getRoleById(roleId).get();
+	        	 
+	        	 user = new User(id, nom, prenom, dateNaissance, role, email, password);
+	         }
+	     } catch (SQLException e) {
+	    	 e.printStackTrace();
+	     }
+		
+		return Optional.ofNullable(user);
+	}
+	
 	public static Optional<Categorie> getCategorieById(int id) {
 		Categorie categorie = null;
 		
@@ -119,7 +208,7 @@ public class UserDAO {
 		
 	     return allProducts;
 	}
-	
+
 	public static List<Produit> getProductsByCategorie(String categorieName) {
 		List<Produit> allProducts = new ArrayList<Produit>();
 		

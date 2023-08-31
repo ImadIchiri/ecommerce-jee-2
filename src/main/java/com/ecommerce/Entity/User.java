@@ -5,26 +5,29 @@ public class User {
 	private String nom;
 	private String prenom;
 	private String dateNaissance;
-	private String email;
 	private Role role;
+	private String email;
+	private String password;
 	
 	public User() {}
 	
-	public User(String nom, String prenom, String dateNaissance, String email, Role role) {
+	public User(String nom, String prenom, String dateNaissance, Role role, String email, String password) {
 		this.nom = nom;
 		this.prenom = prenom;
 		this.dateNaissance = dateNaissance;
-		this.email = email;
 		this.role = role;
+		this.email = email;
+		this.password = password;
 	}
 	
-	public User(int id, String nom, String prenom, String dateNaissance, String email, Role role) {
+	public User(int id, String nom, String prenom, String dateNaissance, Role role, String email, String password) {
 		this.id= id;
 		this.nom = nom;
 		this.prenom = prenom;
 		this.dateNaissance = dateNaissance;
-		this.email = email;
 		this.role = role;
+		this.email = email;
+		this.password = password;
 	}
 	
 	public int getId() {
